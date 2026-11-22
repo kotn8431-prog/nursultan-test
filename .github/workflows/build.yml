@@ -1,4 +1,3 @@
-
 name: build
 
 on: [push, workflow_dispatch]
@@ -14,16 +13,14 @@ jobs:
           distribution: temurin
           java-version: 21
 
-      - uses: gradle/actions/setup-gradle@v4
-        with:
-          gradle-version: 8.12
-
-      - run: |
-          unzip nursultan-test.zip
-          cd nursultan-test
-          gradle build
+      - name: Unzip and build
+        run: |
+          unzip -q DeltaClient-1.0.3.zip -d delta
+          cd "$(dirname "$(find delta -name gradlew | head -n 1)")"
+          chmod +x gradlew
+          ./gradlew build --no-daemon
 
       - uses: actions/upload-artifact@v4
         with:
-          name: nursultan-test
-          path: nursultan-test/build/libs/*.jar
+          name: DeltaClient
+          path: delta/**/build/libs/*.jar
